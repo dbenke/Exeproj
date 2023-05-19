@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="col-md-6 offset-md-3">
+    {% if user.is_authenticated %}
+    <h3>Você está logado!!</h3><p>Today is {{today}}</p>
+
+    {% if records %}
+    {% for record in records %}
+        {{ record.first_name }}<br/>
+        {{ record.last_name }}<br/>
+        <br/>
+    {% endfor %}
+    {% endif %}
+
+
+
+    <form>
+      <textarea id="chat-text" cols = "80" rows="7"></textarea><br>
+      <input id="input" type="text"></br>
+    
+      <input id="submit" type="button" value="Send">
+    </form>
+    {{user}}
+    <!-- <div id="user-hello"></div> -->
+    {{ room_name|json_script:"room-name"}}
+    {{ request.user.username|json_script:"user_username"}}
+    <script>
+
+      const user_username = JSON.parse(document.getElementById('user_username').textContent);
+      const roomName = JSON.parse(document.getElementById('room-name').textContent);
+
+
+      document.querySelector('#submit').onclick = function (e) {
+      const messageInputDom = document.querySelector('#input');
+      const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+          'message': message,
+          'username':user_username,
+        }));
+        messageInputDom.value = '';
+      };
+
+      
+      const chatSocket = new WebSocket(
+        'ws://' +
+        window.location.host +
+        '/ws/chat/' +
+        roomName +
+        '/'
+      );
+
+      chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        console.log(data)
+        // document.querySelector('#user-hello').innerHTML = (data.tester)
+        document.querySelector('#chat-text').value += (data.username + ':' + data.message + '\n')
+      }
+    </script>
+
+
+
+<!-- 
+<script type = "text/javascript">
+  let url= 'ws://${window.location.host}/ws/socket-server'
+
+  const chatsocket= new WebSocket(url)
+
+  chatsocket.onmessage = function(e){
+    let data = JSON.parse(e.data)
+    console.log('Data',data)
+
+  }
+</script> -->
+
+
+
+
+
+
+
+    <h1>The Works!</h1>
+    {% else %}
+    <form method="POST" action="{% url 'home'%}">
+    
+        {% csrf_token %}
+
+        <form>
+            <div class="mb-3">
+              
+              <input type="text" class="form-control" name="username", placeholder="Username">
+              
+            </div>
+            <div class="mb-3">
+              
+              <input type="password" class="form-control" name="password", placeholder="Password">
+            </div>
+           
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+    
+    </form>
+</div>
+
+{% endif %}
+
+{% endblock %}

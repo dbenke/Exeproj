@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="col-md-6 offset-md-3">
+    {% if user.is_authenticated %}
+    <h3>Você está logado!!</h3><p>Today is {{today}}</p>
+
+    {% if records %}
+    {% for record in records %}
+        {{ record.first_name }}<br/>
+        {{ record.last_name }}<br/>
+        <br/>
+    {% endfor %}
+{% endif %}
+
+    <h1>The Template Works!</h1>
+    {% else %}
+    <form method="POST" action="{% url 'home'%}">
+    
+        {% csrf_token %}
+
+        <form>
+            <div class="mb-3">
+              
+              <input type="text" class="form-control" name="username", placeholder="Username">
+              
+            </div>
+            <div class="mb-3">
+              
+              <input type="password" class="form-control" name="password", placeholder="Password">
+            </div>
+           
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+    
+    </form>
+</div>
+
+{% endif %}
+
+{% endblock %}

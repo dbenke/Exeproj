@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="col-md-6 offset-md-3">
+   
+    <h3>Você está logado!!</h3><p>Today is {{today}}</p>
+
+  
+
+    <h1>Adicionar</h1>
+   
+    <form method="POST" action="{% url 'adicionar'%}">
+    
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">adicionar</button>
+        </form>
+        
+</div>
+{% endblock %}
